@@ -1,0 +1,58 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  integration:
+    name: Integration
+    uses: ./.github/workflows/integration.yml
+
+  publish:
+    name: Publish
+    needs:
+      - integration
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2.2.4
+        with:
+          version: 7.26.3
+          run_install: false
+
+      - name: Generate changelog
+        run: pnpx changelogithub
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+      - name: Bundle themes
+        run: cd themes && tar -czf warp-theme-vitesse.tar.gz *.yaml
+        shell: bash
+
+      - name: Fetch release ID
+        id: release-id
+        run: |
+          sleep 5s
+          id=$(curl -sL --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' https://api.github.com/repos/HiDeoo/warp-theme-vitesse/releases/latest | jq -r '.id')
+          echo "id=$id" >> $GITHUB_OUTPUT
+        shell: bash
+
+      - name: Upload release artifacts
+        uses: xresloader/upload-to-github-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          file: 'themes/*'
+          release_id: ${{ steps.release-id.outputs.id }}

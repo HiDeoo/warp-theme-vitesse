@@ -1,0 +1,4 @@
+{
+  "extends": "@hideoo/tsconfig",
+  "exclude": ["dist"]
+}

@@ -1,0 +1,55 @@
+{
+  "name": "warp-theme-vitesse",
+  "version": "0.0.1",
+  "license": "MIT",
+  "description": "A set of Warp themes based on the Vitesse Theme for VS Code",
+  "author": "HiDeoo <github@hideoo.dev> (https://hideoo.dev)",
+  "type": "module",
+  "scripts": {
+    "start": "tsx src",
+    "lint": "prettier -c --cache . && eslint . --cache --max-warnings=0 && tsc --noEmit",
+    "prepare": "husky install"
+  },
+  "dependencies": {
+    "degit": "2.8.4",
+    "fast-glob": "3.2.12",
+    "ora": "6.1.2",
+    "yaml": "2.2.1"
+  },
+  "devDependencies": {
+    "@hideoo/eslint-config": "1.0.0",
+    "@hideoo/prettier-config": "1.0.1",
+    "@hideoo/tsconfig": "1.0.0",
+    "@types/degit": "2.8.3",
+    "@types/node": "18.11.18",
+    "eslint": "8.33.0",
+    "husky": "8.0.3",
+    "lint-staged": "13.1.0",
+    "prettier": "2.8.3",
+    "tsx": "3.12.2",
+    "typescript": "4.9.5"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "packageManager": "pnpm@7.26.3",
+  "private": true,
+  "sideEffects": false,
+  "keywords": [
+    "warp",
+    "terminal",
+    "theme",
+    "vitesse"
+  ],
+  "homepage": "https://github.com/HiDeoo/warp-theme-vitesse",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HiDeoo/warp-theme-vitesse.git"
+  },
+  "bugs": "https://github.com/HiDeoo/warp-theme-vitesse/issues",
+  "prettier": "@hideoo/prettier-config",
+  "lint-staged": {
+    "**/*": "prettier -w -u --cache",
+    "**/*.{js,jsx,ts,tsx,cjs,mjs}": "eslint --cache --max-warnings=0"
+  }
+}
