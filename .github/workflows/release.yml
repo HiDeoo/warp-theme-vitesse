@@ -32,24 +32,27 @@ jobs:
           version: 7.26.3
           run_install: false
 
-      - name: Get pnpm store directory path
-        id: pnpm-store-dir-path
-        shell: bash
-        run: echo "PNPM_STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-
-      - name: Setup pnpm store cache
-        uses: actions/cache@v3
-        id: pnpm-store-cache
-        with:
-          path: ${{ steps.pnpm-store-dir-path.outputs.PNPM_STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-
-
-      - name: Install dependencies
-        run: pnpm install
-
       - name: Generate changelog
         run: pnpx changelogithub
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+      - name: Bundle themes
+        run: cd themes && tar -czf warp-theme-vitesse.tar.gz *.yaml
+        shell: bash
+
+      - name: Fetch release ID
+        id: release-id
+        run: |
+          sleep 5s
+          id=$(curl -sL --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' https://api.github.com/repos/HiDeoo/warp-theme-vitesse/releases/latest | jq -r '.id')
+          echo "id=$id" >> $GITHUB_OUTPUT
+        shell: bash
+
+      - name: Upload release artifacts
+        uses: xresloader/upload-to-github-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          file: 'themes/*'
+          release_id: ${{ steps.release-id.outputs.id }}
